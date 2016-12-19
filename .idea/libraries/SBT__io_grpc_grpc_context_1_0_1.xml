@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: io.grpc:grpc-context:1.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/io.grpc/grpc-context/jars/grpc-context-1.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/io.grpc/grpc-context/docs/grpc-context-1.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/io.grpc/grpc-context/srcs/grpc-context-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

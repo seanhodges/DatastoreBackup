@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: com.google.http-client:google-http-client-jdo:1.21.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.google.http-client/google-http-client-jdo/jars/google-http-client-jdo-1.21.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.google.http-client/google-http-client-jdo/docs/google-http-client-jdo-1.21.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/com.google.http-client/google-http-client-jdo/srcs/google-http-client-jdo-1.21.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
