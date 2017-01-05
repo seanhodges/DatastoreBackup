@@ -1,31 +1,29 @@
 package uk.co.seanhodges.importer.parser
 
 import scala.collection.immutable.HashMap
-import scala.xml.pull.{EvElemEnd, EvElemStart, EvText, XMLEventReader}
+import scala.xml.pull._
 
 /**
- * Created by sean on 16/12/16.
- */
-class WPXMLImporter {
-
-  var articleListener : Option[ArticleListener] = None
+  * Created by sean on 16/12/16.
+  */
+class WPXMLParser extends ContentParser[XMLEvent] {
 
   private var articleData = new HashMap[String, String]()
   private var inArticle = false
 
-  def processData(text: String, currNode: List[String]) {
+  private def processData(text: String, currNode: List[String]) {
     if (inArticle) {
-      articleData += currNode(0) -> text
+      articleData += currNode.head -> text
     }
   }
 
-  def sendArticle() {
+  private def sendArticle() {
     articleListener.foreach {
-      listener => listener.receiveArticle(articleData)
+      listener => listener.receivesArticle(articleData)
     }
   }
 
-  def parse(xml: XMLEventReader) {
+  def parse(xml: Iterator[XMLEvent]): Unit = {
 
     def loop(currNode: List[String]) {
       if (xml.hasNext) {
@@ -33,7 +31,7 @@ class WPXMLImporter {
         xml.next match {
           case EvElemStart(_, label, _, _) =>
             if (label == "item") {
-              articleData.empty
+              articleData = articleData.empty
               inArticle = true
             }
             loop(label :: currNode)

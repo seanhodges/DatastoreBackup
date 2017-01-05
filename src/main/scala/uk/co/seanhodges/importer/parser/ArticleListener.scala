@@ -5,6 +5,8 @@ package uk.co.seanhodges.importer.parser
  */
 trait ArticleListener {
 
-  def receiveArticle(articleData : Map[String, String])
+  type ArticleMap = Map[String, String]
+
+  def receivesArticle(articleData : ArticleMap)
 
 }

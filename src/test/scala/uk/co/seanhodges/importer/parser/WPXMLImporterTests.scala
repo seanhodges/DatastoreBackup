@@ -13,11 +13,9 @@ import scala.xml.pull.{EvText, EvElemEnd, EvElemStart, XMLEventReader}
 
 class WPXMLImporterTests extends FunSuite with BeforeAndAfter with ArticleListener {
 
-  type ArticleMap = Map[String, String]
-
   var articles = ArrayBuffer.empty[ArticleMap]
 
-  override def receiveArticle(articleData: ArticleMap): Unit = {
+  override def receivesArticle(articleData: ArticleMap): Unit = {
     articles += articleData
   }
 
@@ -29,7 +27,7 @@ class WPXMLImporterTests extends FunSuite with BeforeAndAfter with ArticleListen
 
     val xml = new XMLEventReader(Source.fromURL(getClass.getResource("project404.wordpress.2016-12-14.xml"), "UTF-8"))
 
-    val importer = new WPXMLImporter()
+    val importer = new WPXMLParser()
     importer.articleListener = Some(this)
     importer.parse(xml)
 
@@ -37,7 +35,4 @@ class WPXMLImporterTests extends FunSuite with BeforeAndAfter with ArticleListen
 
     assert(articles(13).getOrElse("title", None) == "Enabling UK Freeview TV in Totem (2.22 or above)")
   }
-
-  // mark that you want a test here in the future
-  test("test wordpress XML parsing")(pending)
 }

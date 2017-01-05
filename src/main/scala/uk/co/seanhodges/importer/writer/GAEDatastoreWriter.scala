@@ -1,17 +1,31 @@
 package uk.co.seanhodges.importer.writer
 
-import com.google.cloud.datastore.{DatastoreOptions, Datastore, DateTime, Entity}
+import com.google.cloud.datastore._
 
 /**
  * Created by sean on 19/12/16.
  */
-class GAEDatastoreWriter {
+class GAEDatastoreWriter extends ContentWriter {
 
   var datastore : Datastore = DatastoreOptions.getDefaultInstance.getService
 
-  def put(articleData : Map[String, String]) = {
-    val kind = "sitecore_article"
-    val nextRefId = "SH_TEST_000001"
+  def calculateNextRef(refPrefix : String) : String = {
+    val kind = "sh_refcounter"
+    val refKey = datastore.newKeyFactory().setKind(kind).newKey(refPrefix)
+    val entity : Entity = datastore.get(refKey, ReadOption.eventualConsistency())
+    val currentVal = entity.getLong("lastIndex")
+
+    val result : Entity = Entity.newBuilder(entity)
+      .set("lastIndex", currentVal + 1)
+      .build()
+    datastore.update(result)
+
+    refPrefix + "_" + result.getLong("lastIndex") // Return the new index
+  }
+
+  override def put(articleData : ArticleMap): Entity = {
+    val kind = "sh_article"
+    val nextRefId = calculateNextRef("SH_TEST")
 
     val taskKey = datastore.newKeyFactory().setKind(kind).newKey(nextRefId)
 
@@ -27,4 +41,6 @@ class GAEDatastoreWriter {
     // Saves the entity
     datastore.put(task)
   }
+
+  override def close: Any = ()
 }
