@@ -3,7 +3,9 @@ package uk.co.seanhodges.importer.writer
 import java.io.{File, FileWriter, StringWriter}
 
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import scales.utils._
+import uk.co.seanhodges.importer.Main.getClass
 
 import scala.io.Codec
 import scala.xml.Node
@@ -13,6 +15,7 @@ import scala.xml.Node
   * TODO: This serialization is very inefficient, replace with something like the Scales serializer
   */
 class XMLContentWriter extends ContentWriter {
+    private val logger = LoggerFactory.getLogger(getClass.getName)
 
     import scala.xml.Elem
 
@@ -69,6 +72,7 @@ class XMLContentWriter extends ContentWriter {
 
     override def put(articleData: ArticleMap): Elem = {
         val entry = Content.fromMap(articleData).toXml
+        logger.debug(s"Adding child $entry")
         articleXml = this.addChild(articleXml, entry)
         entry
     }
@@ -88,9 +92,10 @@ class XMLContentWriter extends ContentWriter {
     }
 
     override def close: Unit = {
-        val writer = new FileWriter(calculateOutputPath)
+        val outputPath = calculateOutputPath
+        logger.info(s"Writing XML output to $outputPath")
+        val writer = new FileWriter(outputPath)
         scala.xml.XML.write(writer, this.articleXml, Codec.UTF8.name, xmlDecl = true, doctype = null)
-        val out = writer.toString
         writer.close()
     }
 }

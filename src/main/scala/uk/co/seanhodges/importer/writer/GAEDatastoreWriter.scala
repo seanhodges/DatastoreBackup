@@ -1,11 +1,14 @@
 package uk.co.seanhodges.importer.writer
 
 import com.google.cloud.datastore._
+import org.slf4j.LoggerFactory
+import uk.co.seanhodges.importer.Main.getClass
 
 /**
  * Created by sean on 19/12/16.
  */
 class GAEDatastoreWriter extends ContentWriter {
+  private val logger = LoggerFactory.getLogger(getClass.getName)
 
   var datastore : Datastore = DatastoreOptions.getDefaultInstance.getService
 
@@ -39,6 +42,7 @@ class GAEDatastoreWriter extends ContentWriter {
     val task : Entity = builder.build()
 
     // Saves the entity
+    logger.info(s"Storing database entry for $nextRefId to $kind")
     datastore.put(task)
   }
 

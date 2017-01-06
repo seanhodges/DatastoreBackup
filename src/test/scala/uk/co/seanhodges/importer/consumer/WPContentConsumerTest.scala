@@ -39,11 +39,8 @@ class WPContentConsumerTest extends FunSuite with BeforeAndAfter {
 
       override def parse(xml: Iterator[XMLEvent]): Unit = {
         for(i <- 0 to 1) {
-          this.articleListener match {
-            case Some(listener) =>
-              val articleData = this.buildArticle("art" + i)
-              listener.receivesArticle(articleData)
-          }
+          this.articleData = this.buildArticle("art" + i)
+          this.sendArticle() // Push each article to the consumer
         }
         xml.next()
       }

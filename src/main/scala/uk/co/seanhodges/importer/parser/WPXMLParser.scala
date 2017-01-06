@@ -1,5 +1,7 @@
 package uk.co.seanhodges.importer.parser
 
+import org.slf4j.LoggerFactory
+
 import scala.collection.immutable.HashMap
 import scala.xml.pull._
 
@@ -7,19 +9,14 @@ import scala.xml.pull._
   * Created by sean on 16/12/16.
   */
 class WPXMLParser extends ContentParser[XMLEvent] {
+  private val logger = LoggerFactory.getLogger(getClass.getName)
 
-  private var articleData = new HashMap[String, String]()
   private var inArticle = false
 
   private def processData(text: String, currNode: List[String]) {
     if (inArticle) {
-      articleData += currNode.head -> text
-    }
-  }
-
-  private def sendArticle() {
-    articleListener.foreach {
-      listener => listener.receivesArticle(articleData)
+      logger.debug(s"Processing $text for $currNode.head")
+      this.articleData += currNode.head -> text
     }
   }
 
@@ -31,13 +28,15 @@ class WPXMLParser extends ContentParser[XMLEvent] {
         xml.next match {
           case EvElemStart(_, label, _, _) =>
             if (label == "item") {
-              articleData = articleData.empty
-              inArticle = true
+              this.articleData = this.articleData.empty
+              this.inArticle = true
+              logger.debug(s"Found new article, clearing state")
             }
             loop(label :: currNode)
           case EvElemEnd(_, label) =>
             if (label == "item") {
-              inArticle = false
+              this.inArticle = false
+              logger.debug(s"Article end - sending to consumer")
               sendArticle()
             }
             loop(currNode.tail)

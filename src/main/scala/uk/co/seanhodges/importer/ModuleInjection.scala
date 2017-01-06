@@ -1,5 +1,6 @@
 package uk.co.seanhodges.importer
 
+import org.slf4j.LoggerFactory
 import uk.co.seanhodges.importer.consumer.WPContentConsumer
 import uk.co.seanhodges.importer.parser.WPXMLParser
 import uk.co.seanhodges.importer.writer.GAEDatastoreWriter
