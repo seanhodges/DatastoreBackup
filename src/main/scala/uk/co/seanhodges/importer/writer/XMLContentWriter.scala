@@ -5,7 +5,6 @@ import java.io.{File, FileWriter, StringWriter}
 import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 import scales.utils._
-import uk.co.seanhodges.importer.Main.getClass
 
 import scala.io.Codec
 import scala.xml.Node
@@ -22,7 +21,7 @@ class XMLContentWriter extends ContentWriter {
     var articleXml : Elem = <backup></backup>
     private val XML_FILE_DATE_PATTERN = "yyyy-MM-dd-hhmmss"
 
-    private def calculateOutputPath = new File(".").getAbsolutePath + File.separator + "backup-" + DateTime.now().toString(XML_FILE_DATE_PATTERN) + ".xml"
+    private def calculateOutputPath = new File(".").getAbsolutePath + File.separator + "datastore-backup-" + DateTime.now.toString(XML_FILE_DATE_PATTERN) + ".xml"
 
     trait Content {
         def toXml: Elem

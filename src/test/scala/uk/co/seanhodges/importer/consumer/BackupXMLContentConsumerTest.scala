@@ -5,6 +5,7 @@ import uk.co.seanhodges.importer.parser.ContentParser
 import uk.co.seanhodges.importer.writer.ContentWriter
 
 import scala.collection.immutable.HashMap
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import scala.xml.pull.{XMLEvent, XMLEventReader}
@@ -12,7 +13,7 @@ import scala.xml.pull.{XMLEvent, XMLEventReader}
 /**
   * Created by sean on 05/01/2017.
   */
-class WPContentConsumerTest extends FunSuite with BeforeAndAfter {
+class BackupXMLContentConsumerTest extends FunSuite with BeforeAndAfter {
 
   // Fake writer for inspecting the results
   class TestWriter extends ContentWriter {
@@ -22,14 +23,14 @@ class WPContentConsumerTest extends FunSuite with BeforeAndAfter {
     override def close: Any = ()
   }
 
-  private var consumer: WPContentConsumer = _
+  private var consumer: BackupXMLContentConsumer = _
   private val writer: TestWriter = new TestWriter
 
   before {
     // Fake the XML parser so we can simulate the parsing process
     class XMLParser extends ContentParser[XMLEvent] {
-      private def buildArticle(ref: String): HashMap[String, String] = {
-        var articleData = new HashMap[String, String]()
+      private def buildArticle(ref: String): mutable.Map[String, String] = {
+        var articleData: mutable.Map[String, String] = new mutable.HashMap[String, String]()
         articleData += ("ref" -> ref,
           "heading" -> "My test article",
           "body"    -> "This is a test article",
@@ -48,7 +49,7 @@ class WPContentConsumerTest extends FunSuite with BeforeAndAfter {
 
     val parser = new XMLParser
 
-    this.consumer = new WPContentConsumer(parser, this.writer)
+    this.consumer = new BackupXMLContentConsumer(parser, this.writer)
     parser.articleListener = Some(this.consumer) // Listen on parse events
   }
 
@@ -76,6 +77,7 @@ class WPContentConsumerTest extends FunSuite with BeforeAndAfter {
     this.consumer.start(new XMLEventReader(Source.fromString(xml.toString))).end
 
     assert(this.writer.DB.size === 2)
+    assert(this.writer.DB(0)("heading") == "My test article")
 
     // Check the refs are correct
     for (index <- this.writer.DB.indices) {

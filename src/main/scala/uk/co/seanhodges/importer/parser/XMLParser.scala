@@ -2,13 +2,12 @@ package uk.co.seanhodges.importer.parser
 
 import org.slf4j.LoggerFactory
 
-import scala.collection.immutable.HashMap
 import scala.xml.pull._
 
 /**
   * Created by sean on 16/12/16.
   */
-class WPXMLParser extends ContentParser[XMLEvent] {
+class XMLParser extends ContentParser[XMLEvent] {
   private val logger = LoggerFactory.getLogger(getClass.getName)
 
   private var inArticle = false
@@ -16,7 +15,7 @@ class WPXMLParser extends ContentParser[XMLEvent] {
   private def processData(text: String, currNode: List[String]) {
     if (inArticle) {
       logger.debug(s"Processing $text for $currNode.head")
-      this.articleData += currNode.head -> text
+      this.articleData += (currNode.head -> text)
     }
   }
 
@@ -27,14 +26,14 @@ class WPXMLParser extends ContentParser[XMLEvent] {
 
         xml.next match {
           case EvElemStart(_, label, _, _) =>
-            if (label == "item") {
+            if (label == this.articleMarker) {
               this.articleData = this.articleData.empty
               this.inArticle = true
               logger.debug(s"Found new article, clearing state")
             }
             loop(label :: currNode)
           case EvElemEnd(_, label) =>
-            if (label == "item") {
+            if (label == this.articleMarker) {
               this.inArticle = false
               logger.debug(s"Article end - sending to consumer")
               sendArticle()
